@@ -15,7 +15,8 @@ function loadEventListeners() {
 // add a task
 function addTask(e) {
     if(taskInput.value === "") {
-        alert("No task name given.")
+        alert("No task name given.");
+        e.preventDefault();
     } else {
         //create li elemement
         const li = document.createElement("li");
