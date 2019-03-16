@@ -7,9 +7,12 @@ const taskInput = document.querySelector("#task");
 
 //load all event listeners
 loadEventListeners();
-
 function loadEventListeners() {
     form.addEventListener("submit", addTask);
+    tasklist.addEventListener("click", removeTask);
+    clearTasks.addEventListener("click", clearAllTasks);
+    filter.addEventListener("keyup", filterTasks);
+
 }
 
 // add a task
@@ -55,4 +58,15 @@ function clearAllTasks() {
         }
     }
 };
+
+function filterTasks(e) {
+    const text = e.target.value.toLowerCase();
+
+    document.querySelectorAll(".task").forEach(function(task){
+        if(task.firstChild.textContent.toLowerCase().indexOf(text) !== -1) {
+            task.style.display = 'block';
+        } else {
+            task.style.display = 'none';
+        }
+    })
 }
