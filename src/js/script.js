@@ -47,4 +47,12 @@ function removeTask(e) {
         console.log(e.target);
     }
 };
+
+function clearAllTasks() {
+    if(confirm('This will delete ALL tasks')) {
+        while (tasklist.firstChild) {
+            tasklist.removeChild(tasklist.firstChild);
+        }
+    }
+};
 }
