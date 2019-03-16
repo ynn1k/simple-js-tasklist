@@ -37,4 +37,14 @@ function addTask(e) {
 
         e.preventDefault();
     }
+};
+
+function removeTask(e) {
+    if(e.target.parentElement.classList.contains('delete-task')) {
+        if(confirm('Delete task:'+e.target.parentElement.parentElement.textContent+'')) {
+            e.target.parentElement.parentElement.remove();
+        }
+        console.log(e.target);
+    }
+};
 }
