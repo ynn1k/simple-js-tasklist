@@ -55,13 +55,14 @@ function renderTasks(tasks) {
     tasks.forEach(function(task){
         //create li elemement
         const li = document.createElement("li");
-        li.className = "task";
+        li.className = "d-flex list-group-item task";
         li.appendChild(document.createTextNode(task));
 
         //create wrapping delete link
         const delLink = document.createElement("a");
-        delLink.className = "delete-task";
+        delLink.className = "ml-auto delete-task";
         delLink.innerHTML = "<i class=\"far fa-trash-alt\"></i>";
+        delLink.setAttribute("href", "#"); //boostrap styling fix
 
         //insert li into delition link
         li.appendChild(delLink);
@@ -91,12 +92,11 @@ function clearAllTasks() {
 
 function filterTasks(e) {
     const text = e.target.value.toLowerCase();
-
     document.querySelectorAll(".task").forEach(function(task){
         if(task.firstChild.textContent.toLowerCase().indexOf(text) !== -1) {
-            task.style.display = 'block';
+            task.setAttribute( 'style', "display: flex !important");
         } else {
-            task.style.display = 'none';
+            task.setAttribute( 'style', "display: none !important ");
         }
     })
 }
