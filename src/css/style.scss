@@ -1,0 +1,21 @@
+.form-check {
+    cursor: pointer;
+
+    input, label {
+        cursor: pointer;
+    }
+}
+
+input[type=checkbox] {
+    + label {
+        font-weight: 500;
+    }
+
+    &:checked {
+        + label {
+            text-decoration: line-through;
+            opacity: .7;
+            font-weight: 100;
+        }
+    }
+}
