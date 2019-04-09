@@ -53,15 +53,17 @@ class Tasklist {
 
     static remove(e) {
         e.preventDefault();
-        if(confirm('Delete task: ' + e.target.parentElement.parentElement.textContent.trim())) {
-            tasks.forEach(function (task, i) {
-                if(e.target.parentElement.parentElement.textContent.trim() === task) {
-                    e.target.parentElement.parentElement.remove();
-                    tasks.splice(i, 1);
-                }
-            });
-            Tasklist.store();
-            Tasklist.filter();
+        if(e.target.parentElement.classList.contains('delete-task')){
+            if(confirm('Delete task: ' + e.target.parentElement.parentElement.textContent.trim())) {
+                tasks.forEach(function (task, i) {
+                    if(e.target.parentElement.parentElement.textContent.trim() === task) {
+                        e.target.parentElement.parentElement.remove();
+                        tasks.splice(i, 1);
+                    }
+                });
+                Tasklist.store();
+                Tasklist.filter();
+            }
         }
     }
 
