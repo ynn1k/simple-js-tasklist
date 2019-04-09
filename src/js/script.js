@@ -76,6 +76,8 @@ class Tasklist {
             }
             localStorage.removeItem('tasks');
             localStorage.removeItem('completed');
+            tasks = [];
+            Tasklist.init();
         }
     }
 
