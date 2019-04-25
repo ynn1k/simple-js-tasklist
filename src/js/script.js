@@ -6,13 +6,18 @@ const filter = document.querySelector("#filter");
 const taskInput = document.querySelector("#task");
 //app vars
 let tasks = [];
+let completed = [];
 
 class Tasklist {
     static init() {
         if(localStorage.getItem('tasks') !== null) {
             tasks = JSON.parse(localStorage.getItem('tasks'));
         }
-        
+
+        if(localStorage.getItem('completed') !== null) {
+            completed = JSON.parse(localStorage.getItem('completed'));
+        }
+
         tasks.forEach(function(task){
             Tasklist.renderTask(task)
         });
@@ -22,7 +27,7 @@ class Tasklist {
 
     static renderTask(task) {
         let checked;
-        //if(completed.indexOf(task) > -1){checked = "checked"}
+        if(completed.indexOf(task) > -1){checked = "checked"}
         const markup = `
                 <li class="d-flex list-group-item task">
                     <div class="form-check">
@@ -52,8 +57,8 @@ class Tasklist {
     }
 
     static remove(e) {
-        e.preventDefault();
         if(e.target.parentElement.classList.contains('delete-task')){
+            e.preventDefault();
             if(confirm('Delete task: ' + e.target.parentElement.parentElement.textContent.trim())) {
                 tasks.forEach(function (task, i) {
                     if(e.target.parentElement.parentElement.textContent.trim() === task) {
@@ -67,8 +72,24 @@ class Tasklist {
         }
     }
 
+    static complete(e) {
+        if(e.target.parentElement.classList.contains('form-check')){
+            if(completed.includes(e.target.parentElement.parentElement.textContent.trim())) {
+                completed.forEach(function (task, i) {
+                    if(e.target.parentElement.parentElement.textContent.trim() === task) {
+                        completed.splice(i, 1);
+                    }
+                });
+            } else {
+                completed.push(e.target.parentElement.parentElement.textContent.trim());
+            }
+            Tasklist.store();
+        }
+    }
+
     static store() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem('completed', JSON.stringify(completed));
     }
 
     static deleteAll() {
@@ -109,5 +130,6 @@ class Tasklist {
 document.addEventListener('DOMContentLoaded', Tasklist.init);
 form.addEventListener("submit", Tasklist.add);
 tasklist.addEventListener("click", Tasklist.remove);
+tasklist.addEventListener("mouseup", Tasklist.complete);
 clearTasks.addEventListener("click", Tasklist.deleteAll);
 filter.addEventListener("keyup", Tasklist.filter);
