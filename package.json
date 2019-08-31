@@ -17,14 +17,14 @@
   },
   "homepage": "https://github.com/ynn1k/simple-js-tasklist#readme",
   "devDependencies": {
-    "browser-sync": "^2.26.5",
-    "gulp": "^4.0.1",
+    "browser-sync": "^2.26.7",
+    "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.1.0",
     "gulp-concat": "^2.6.1",
     "gulp-htmlmin": "^5.0.1",
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.6.5",
-    "gulp-terser": "^1.1.7"
+    "gulp-terser": "^1.2.0"
   }
 }
