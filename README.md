@@ -1,6 +1,5 @@
 # simple-js-tasklist
 I thought, noone has ever built a task list with js, right?
-[live demo](https://yannik.dev/github/simple-js-tasklist/dist)
 
 
 ## Usage of Local dev enviorment
