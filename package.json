@@ -1,0 +1,26 @@
+{
+	"name": "simple-js-tasklist",
+	"version": "1.0.0",
+	"description": "I thought, no one has ever built a task list with js, right?",
+	"main": "index.js",
+	"scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --out-dir build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/RanjithGovindaraj/simple-js-tasklist.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/RanjithGovindaraj/simple-js-tasklist/issues"
+	},
+	"homepage": "https://github.com/RanjithGovindaraj/simple-js-tasklist#readme",
+	"devDependencies": {
+    	"parcel-bundler": "^1.12.4",
+		"sass": "^1.27.0"
+	}
+}

@@ -133,3 +133,10 @@ tasklist.addEventListener("click", Tasklist.remove);
 tasklist.addEventListener("mouseup", Tasklist.complete);
 clearTasks.addEventListener("click", Tasklist.deleteAll);
 filter.addEventListener("keyup", Tasklist.filter);
+
+//parcel hot reload
+if (module.hot) {
+	module.hot.dispose(function () {
+		window.location.reload();
+	});
+}
