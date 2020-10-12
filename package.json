@@ -6,7 +6,7 @@
 	"scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html --out-dir build"
+    "build": "parcel build src/index.html --out-dir build --public-url ./"
 	},
 	"repository": {
 		"type": "git",
