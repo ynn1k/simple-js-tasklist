@@ -4,6 +4,7 @@ const tasklist = document.querySelector(".tasklist");
 const clearTasks = document.querySelector(".clear-tasks");
 const filter = document.querySelector("#filter");
 const taskInput = document.querySelector("#task");
+
 //app vars
 let tasks = [];
 let completed = [];
@@ -29,12 +30,12 @@ class Tasklist {
         let checked;
         if(completed.indexOf(task) > -1){checked = "checked"}
         const markup = `
-                <li class="d-flex list-group-item task">
-                    <div class="form-check">
+                <li class="d-flex list-group-item list-group-item-action task">
+                    <div class="form-check ms-1">
                         <input type="checkbox" ${checked} class="form-check-input" id="${task}">
                         <label class="form-check-label" for="${task}">${task}</label>
                     </div>
-                    <a href="#" class="ml-auto delete-task">
+                    <a href="#" class="ms-auto delete-task">
                         <i class="far fa-trash-alt"></i>
                     </a>
                 </li>`;
@@ -106,7 +107,7 @@ class Tasklist {
 
     static filter(e) {
         if(tasks.length > 1) {
-            document.querySelector('.clear-tasks').style.display = 'block';
+            document.querySelector('.clear-tasks').style.display = 'inline-block';
             document.querySelector('.filter-wrapper').style.display = 'block';
         } else {
             document.querySelector('.clear-tasks').style.display = 'none';
@@ -134,9 +135,8 @@ tasklist.addEventListener("mouseup", Tasklist.complete);
 clearTasks.addEventListener("click", Tasklist.deleteAll);
 filter.addEventListener("keyup", Tasklist.filter);
 
-//parcel hot reload
 if (module.hot) {
-	module.hot.dispose(function () {
-		window.location.reload();
-	});
+    module.hot.dispose(function () {
+        window.location.reload();
+    });
 }
