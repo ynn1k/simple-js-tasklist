@@ -1,52 +1,52 @@
-//UI vars
-const form = document.querySelector("#task-form");
-const tasklist = document.querySelector(".tasklist");
-const clearTasks = document.querySelector(".clear-tasks");
-const filter = document.querySelector("#filter");
-const taskInput = document.querySelector("#task");
-
-//app vars
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-
 class Tasklist {
-    static init() {
-        tasks.forEach(task => Tasklist.renderTask(task));
+    constructor() {
+        this.form = document.querySelector("#task-form");
+        this.tasklist = document.querySelector(".tasklist");
+        this.clearTasks = document.querySelector(".clear-tasks");
+        this.filterEl = document.querySelector("#filter");
+        this.taskInput = document.querySelector("#task");
+        this.tasks = JSON.parse(localStorage.getItem('tasks')) || []
 
-        Tasklist.filter();//TODO: ???
+        this.loadTasks();
+        this.bindEvents();
+    
+        this.filter = this.filter.bind(this);
     }
 
-    /**
-     * reders a single task to the bottom
-     * @param {object} task
-     */
-    static renderTask(task) {
-        let checked
+    loadTasks() {
+        this.tasks.forEach(task => this.renderTask(task));
+        this.filter();
+    }
 
-        if(task.status === 'completed') {
-            checked = 'checked'
-        } else {
-            checked = 'pending'
-        }
+    bindEvents() {
+        this.form.addEventListener("submit", (e) => this.add(e));
+        this.tasklist.addEventListener("click", (e) => this.remove(e));
+        this.tasklist.addEventListener("mouseup", (e) => this.complete(e));
+        this.clearTasks.addEventListener("click", (e) => this.deleteAll(e));
+        this.filterEl.addEventListener("keyup", (e) => this.filter(e));
+    }
 
+    renderTask(task) {
+        let checked = task.status === 'completed' ? 'checked' : "pending";
         const html = `
-            <li class="d-flex list-group-item list-group-item-action task" data-id="${task.date}">
-                <div class="form-check ms-1">
-                    <input type="checkbox" ${checked} class="form-check-input" id="task_${task.date}">
-                    <label class="form-check-label" for="task_${task.date}">${task.name}</label>
-                </div>
-                <a href="#" class="ms-auto delete-task">
-                    <i class="far fa-trash-alt"></i>
-                </a>
-            </li>`;
+        <li class="d-flex list-group-item list-group-item-action task" data-id="${task.date}">
+            <div class="form-check ms-1">
+                <input type="checkbox" ${checked} class="form-check-input" id="task_${task.date}">
+                <label class="form-check-label" for="task_${task.date}">${task.name}</label>
+            </div>
+            <a href="#" class="ms-auto delete-task">
+                <i class="far fa-trash-alt"></i>
+            </a>
+        </li>`;
 
         let doc = new DOMParser().parseFromString(html.trim(), 'text/html')
         let taskNode = doc.body.querySelector('li');
-        tasklist.appendChild(taskNode);
+        this.tasklist.appendChild(taskNode);
     }
 
-    static add(event) {
+    add(event) {
         event.preventDefault();
-        let taskName = taskInput.value.trim();
+        let taskName = this.taskInput.value.trim();
 
         if(taskName.length) {
             let task = {
@@ -56,48 +56,48 @@ class Tasklist {
                 order: '',
             }
 
-            tasks.push(task);
-            Tasklist.renderTask(task);
+            this.tasks.push(task);
+            this.renderTask(task);
 
-            form.reset();
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            this.form.reset();
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
 
-            Tasklist.filter();
+            this.filter();
         }
     }
 
-    static remove(event) {
+    remove(event) {
         if(event.target.parentElement.classList.contains('delete-task')){
             event.preventDefault();
             if(confirm('Delete task: ' + event.target.parentElement.parentElement.textContent.trim())) {
                 let date = parseInt(event.target.offsetParent.dataset.id)
-                tasks = tasks.filter(task => task.date !== date)
+                this.tasks = this.tasks.filter(task => task.date !== date)
                 event.target.offsetParent.remove()
 
-                localStorage.setItem('tasks', JSON.stringify(tasks));
-                Tasklist.filter();
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+                this.filter();
             }
         }
     }
 
-    static complete(event) {
+    complete(event) {
         if(event.target.parentElement.classList.contains('form-check')){
             let date = parseInt(event.target.offsetParent.dataset.id)
-            tasks.find(task => task.date === date).status = 'completed';
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            this.tasks.find(task => task.date === date).status = 'completed';
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
         }
     }
 
-    static deleteAll() {
+    deleteAll() {
         if(confirm('This will delete ALL tasks')) {
-            tasklist.innerHTML = ''
+            this.tasklist.innerHTML = ''
             localStorage.removeItem('tasks');
             window.location.reload()
         }
     }
 
-    static filter(event) {
-        if(tasks.length > 2) {
+    filter(event) {
+        if(this.tasks.length > 2) {
             document.querySelector('.clear-tasks').style.display = 'inline-block';
             document.querySelector('.filter-wrapper').style.display = 'block';
         } else {
@@ -108,20 +108,17 @@ class Tasklist {
         if(event){
             const text = event.target.value.toLowerCase();
             document.querySelectorAll(".task").forEach(function(task){
-                if(task.querySelector(".form-check-label").textContent.toLowerCase().trim().indexOf(text) !== -1) {
+                const label = task.querySelector(".form-check-label");
+                if(label.textContent.toLowerCase().trim().indexOf(text) !== -1) {
                     task.setAttribute( 'style', "display: flex !important");
-                } else {
-                    task.setAttribute( 'style', "display: none !important ");
-                }
+                    return;
+                } 
+                task.setAttribute( 'style', "display: none !important ");
             });
         }
     }
 }
 
-//event listeners
-document.addEventListener('DOMContentLoaded', Tasklist.init);
-form.addEventListener("submit", Tasklist.add);
-tasklist.addEventListener("click", Tasklist.remove);
-tasklist.addEventListener("mouseup", Tasklist.complete);
-clearTasks.addEventListener("click", Tasklist.deleteAll);
-filter.addEventListener("keyup", Tasklist.filter);
+document.addEventListener('DOMContentLoaded', function() {
+    new Tasklist();  
+});
