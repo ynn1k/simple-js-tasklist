@@ -12,6 +12,9 @@ class Tasklist {
     static init() {
         tasks.forEach(task => Tasklist.renderTask(task));
 
+        const taskNodes = tasklist.querySelectorAll('.task');
+        
+
         Tasklist.filter();//TODO: ???
     }
 
@@ -29,7 +32,7 @@ class Tasklist {
         }
 
         const html = `
-            <li class="d-flex list-group-item list-group-item-action task" data-id="${task.date}">
+            <li class="d-flex list-group-item list-group-item-action task" data-id="${task.date}" draggable="true">
                 <div class="form-check ms-1">
                     <input type="checkbox" ${checked} class="form-check-input" id="task_${task.date}">
                     <label class="form-check-label" for="task_${task.date}">${task.name}</label>
@@ -42,6 +45,33 @@ class Tasklist {
         let doc = new DOMParser().parseFromString(html.trim(), 'text/html')
         let taskNode = doc.body.querySelector('li');
         tasklist.appendChild(taskNode);
+
+        taskNode.addEventListener('dragstart',()=>taskNode.classList.add('dragging'))
+        taskNode.addEventListener('dragend',()=>taskNode.classList.remove('dragging'))
+        taskNode.addEventListener('dragover', (e)=>{
+            e.preventDefault()
+            const holdingElement = tasklist.querySelector('.dragging');
+            const draggablePositions = [...tasklist.querySelectorAll('li:not(.dragging)')];
+            
+            const holdingOverElement = draggablePositions.reduce((closestElement, element)=>{
+                const box = element.getBoundingClientRect();
+
+                const offset = e.clientY - box.top - box.height / 2;
+
+                if (offset < 0 && offset > closestElement.offset) {
+                    return {offset, element}
+                }
+                return closestElement
+                
+
+            },{ offset : Number.NEGATIVE_INFINITY }).element;
+            
+             if (holdingOverElement === undefined) {
+                 tasklist.appendChild(holdingElement);
+            } else {
+                tasklist.insertBefore(holdingElement, holdingOverElement);
+            }
+        })
     }
 
     static add(event) {
@@ -125,3 +155,4 @@ tasklist.addEventListener("click", Tasklist.remove);
 tasklist.addEventListener("mouseup", Tasklist.complete);
 clearTasks.addEventListener("click", Tasklist.deleteAll);
 filter.addEventListener("keyup", Tasklist.filter);
+
