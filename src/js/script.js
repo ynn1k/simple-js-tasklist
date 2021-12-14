@@ -83,8 +83,12 @@ class Tasklist {
     static complete(event) {
         if(event.target.parentElement.classList.contains('form-check')){
             let date = parseInt(event.target.offsetParent.dataset.id)
-            tasks.find(task => task.date === date).status = 'completed';
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            const task = tasks.find(task => task.date === date);
+            task.status = task.status === "completed" ? "pending" : "completed";
+            localStorage.setItem('tasks', JSON.stringify([
+                ...tasks.filter(task => task.date !== date),
+                task
+            ]));
         }
     }
 
