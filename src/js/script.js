@@ -9,25 +9,14 @@ const taskInput = document.querySelector("#task");
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
 function reorderLocalStorage(newOrdering){
-    const sortedTasklist = [];
-
-    newOrdering.forEach((taskName)=>{
-        tasks.forEach((task, index) => {
-          if (task.name === taskName) {
-            sortedTasklist.push(tasks[index]);
-          }
-        });
-    })
-
-    localStorage.setItem('tasks', JSON.stringify(sortedTasklist));
+    tasks.sort((a,b)=>newOrdering.findIndex((task)=>task === a.name) - newOrdering.findIndex((task)=>task === b.name))
+    
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
 class Tasklist {
     static init() {
         tasks.forEach(task => Tasklist.renderTask(task));
-
-        const taskNodes = tasklist.querySelectorAll('.task');
-        
 
         Tasklist.filter();//TODO: ???
     }
