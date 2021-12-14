@@ -8,6 +8,20 @@ const taskInput = document.querySelector("#task");
 //app vars
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+function reorderLocalStorage(newOrdering){
+    const sortedTasklist = [];
+
+    newOrdering.forEach((taskName)=>{
+        tasks.forEach((task, index) => {
+          if (task.name === taskName) {
+            sortedTasklist.push(tasks[index]);
+          }
+        });
+    })
+
+    localStorage.setItem('tasks', JSON.stringify(sortedTasklist));
+}
+
 class Tasklist {
     static init() {
         tasks.forEach(task => Tasklist.renderTask(task));
@@ -46,8 +60,8 @@ class Tasklist {
         let taskNode = doc.body.querySelector('li');
         tasklist.appendChild(taskNode);
 
-        taskNode.addEventListener('dragstart',()=>taskNode.classList.add('dragging'))
-        taskNode.addEventListener('dragend',()=>taskNode.classList.remove('dragging'))
+        taskNode.addEventListener('dragstart',()=>taskNode.classList.add('dragging'));
+        
         taskNode.addEventListener('dragover', (e)=>{
             e.preventDefault()
             const holdingElement = tasklist.querySelector('.dragging');
@@ -55,23 +69,26 @@ class Tasklist {
             
             const holdingOverElement = draggablePositions.reduce((closestElement, element)=>{
                 const box = element.getBoundingClientRect();
-
                 const offset = e.clientY - box.top - box.height / 2;
 
                 if (offset < 0 && offset > closestElement.offset) {
                     return {offset, element}
                 }
                 return closestElement
-                
-
             },{ offset : Number.NEGATIVE_INFINITY }).element;
-            
+
              if (holdingOverElement === undefined) {
                  tasklist.appendChild(holdingElement);
             } else {
                 tasklist.insertBefore(holdingElement, holdingOverElement);
             }
-        })
+        });
+
+        taskNode.addEventListener('dragend',()=>{
+            taskNode.classList.remove('dragging');
+            const newOrdering = [...tasklist.querySelectorAll('label')].map(task=>task.innerHTML)
+            reorderLocalStorage(newOrdering)
+        });
     }
 
     static add(event) {
