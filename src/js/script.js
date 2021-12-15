@@ -2,6 +2,7 @@
 const form = document.querySelector("#task-form");
 const tasklist = document.querySelector(".tasklist");
 const clearTasks = document.querySelector(".clear-tasks");
+const clearCompTasks = document.querySelector(".clear-comp-tasks");
 const filter = document.querySelector("#filter");
 const taskInput = document.querySelector("#task");
 
@@ -99,9 +100,11 @@ class Tasklist {
     static filter(event) {
         if(tasks.length > 2) {
             document.querySelector('.clear-tasks').style.display = 'inline-block';
+            document.querySelector('.clear-comp-tasks').style.display = 'inline-block';
             document.querySelector('.filter-wrapper').style.display = 'block';
         } else {
             document.querySelector('.clear-tasks').style.display = 'none';
+            document.querySelector('.clear-comp-tasks').style.display = 'none';
             document.querySelector('.filter-wrapper').style.display = 'none';
         }
 
