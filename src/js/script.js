@@ -2,6 +2,7 @@
 const form = document.querySelector("#task-form");
 const tasklist = document.querySelector(".tasklist");
 const clearTasks = document.querySelector(".clear-tasks");
+const clearCompTasks = document.querySelector(".clear-comp-tasks");
 const filter = document.querySelector("#filter");
 const taskInput = document.querySelector("#task");
 
@@ -96,12 +97,26 @@ class Tasklist {
         }
     }
 
+    static deleteAllCompleted(){
+        if(confirm('This will delete ALL completed tasks')) {
+            tasks.forEach(task => {
+              if(task.status === 'completed')
+              document.querySelector(`[data-id="${task.date}"]`).remove();
+            });
+            tasks = tasks.filter(task => task.status !== 'completed');
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            Tasklist.filter();
+        }
+    }
+
     static filter(event) {
         if(tasks.length > 2) {
             document.querySelector('.clear-tasks').style.display = 'inline-block';
+            document.querySelector('.clear-comp-tasks').style.display = 'inline-block';
             document.querySelector('.filter-wrapper').style.display = 'block';
         } else {
             document.querySelector('.clear-tasks').style.display = 'none';
+            document.querySelector('.clear-comp-tasks').style.display = 'none';
             document.querySelector('.filter-wrapper').style.display = 'none';
         }
 
@@ -124,4 +139,5 @@ form.addEventListener("submit", Tasklist.add);
 tasklist.addEventListener("click", Tasklist.remove);
 tasklist.addEventListener("mouseup", Tasklist.complete);
 clearTasks.addEventListener("click", Tasklist.deleteAll);
+clearCompTasks.addEventListener("click", Tasklist.deleteAllCompleted);
 filter.addEventListener("keyup", Tasklist.filter);
