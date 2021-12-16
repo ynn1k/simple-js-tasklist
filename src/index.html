@@ -16,6 +16,16 @@
                 <h1 class="text-center">Simple tasklist</h1>
                 <hr>
 
+                <form id="tasklist-form" class="d-flex">
+                    <div class="form-floating d-flex flex-fill">
+                        <input type="text" name="task" id="tasklist" class="form-control me-3" placeholder="New Tasklist">
+                        <label for="tasklist">Name new task list</label>
+                    </div>
+                    <input type="submit" class="btn btn-success px-4" value="New Tasklist">
+                </form>
+
+                <br>
+
                 <div class="form-floating filter-wrapper">
                     <input type="text" name="filter" id="filter" class="form-control" placeholder="filter">
                     <label for="filter">Search for task</label>
@@ -26,6 +36,7 @@
                 <a href="#" class="btn btn-sm btn-outline-danger clear-tasks">Clear tasks</a>
                 <a href="#" class="btn btn-sm btn-outline-danger clear-comp-tasks">Clear completed tasks</a>
                 <hr>
+
 
                 <form id="task-form" class="d-flex">
                     <div class="form-floating d-flex flex-fill">

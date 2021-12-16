@@ -7,13 +7,20 @@ const filter = document.querySelector("#filter");
 const taskInput = document.querySelector("#task");
 
 //app vars
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+let tasklists = JSON.parse(localStorage.getItem('tasklists')) || [];
+let selected = 0;
 
 class Tasklist {
     static init() {
-        tasks.forEach(task => Tasklist.renderTask(task));
+      console.log('tasklist lenght', tasklists.length)
+      //   if(tasklists.length == 0)
+      //     form.style.display = 'none';
+      //   else{
+      //     form.style.display = 'block';
+      //   tasklists[selected].forEach(task => Tasklist.renderTask(task));
+      //   Tasklist.filter();//TODO: ???
+      // }
 
-        Tasklist.filter();//TODO: ???
     }
 
     /**
@@ -57,11 +64,11 @@ class Tasklist {
                 order: '',
             }
 
-            tasks.push(task);
+            tasklists[selected].push(task);
             Tasklist.renderTask(task);
 
             form.reset();
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('tasklists', JSON.stringify(tasklists));
 
             Tasklist.filter();
         }
@@ -72,10 +79,10 @@ class Tasklist {
             event.preventDefault();
             if(confirm('Delete task: ' + event.target.parentElement.parentElement.textContent.trim())) {
                 let date = parseInt(event.target.offsetParent.dataset.id)
-                tasks = tasks.filter(task => task.date !== date)
+                tasklists[selected] = tasklists[selected].filter(task => task.date !== date)
                 event.target.offsetParent.remove()
 
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('tasklists', JSON.stringify(tasklists));
                 Tasklist.filter();
             }
         }
@@ -84,33 +91,33 @@ class Tasklist {
     static complete(event) {
         if(event.target.parentElement.classList.contains('form-check')){
             let date = parseInt(event.target.offsetParent.dataset.id)
-            tasks.find(task => task.date === date).status = 'completed';
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            tasklists[selected].find(task => task.date === date).status = 'completed';
+            localStorage.setItem('tasklists', JSON.stringify(tasklists));
         }
     }
 
     static deleteAll() {
         if(confirm('This will delete ALL tasks')) {
             tasklist.innerHTML = ''
-            localStorage.removeItem('tasks');
+            localStorage.removeItem('tasklists');
             window.location.reload()
         }
     }
 
     static deleteAllCompleted(){
         if(confirm('This will delete ALL completed tasks')) {
-            tasks.forEach(task => {
+            tasklists[selected].forEach(task => {
               if(task.status === 'completed')
               document.querySelector(`[data-id="${task.date}"]`).remove();
             });
-            tasks = tasks.filter(task => task.status !== 'completed');
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            tasklists[selected] = tasklists[selected].filter(task => task.status !== 'completed');
+            localStorage.setItem('tasklists', JSON.stringify(tasklists));
             Tasklist.filter();
         }
     }
 
     static filter(event) {
-        if(tasks.length > 2) {
+        if(tasklists[selected].length > 2) {
             document.querySelector('.clear-tasks').style.display = 'inline-block';
             document.querySelector('.clear-comp-tasks').style.display = 'inline-block';
             document.querySelector('.filter-wrapper').style.display = 'block';
