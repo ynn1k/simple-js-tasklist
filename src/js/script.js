@@ -37,6 +37,7 @@ function addTaskList(event) {
                         <div class="form-floating" id="filter-wrapper${list}">
                           <input type="text" name="filter${list}" id="filter${list}" class="form-control" placeholder="filter" />
                           <label for="filter${list}">Search for task</label>
+                          <input id="due${list}" type="#" class="btn btn-success" value="Due Soon" />
                         </div>
 
                         <ol class="list-group list-group-numbered mt-3 mb-3" id="tasklist${list}"></ol>
@@ -51,6 +52,7 @@ function addTaskList(event) {
                             <input type="text" name="task" id="task${list}" class="form-control me-3" placeholder="New Task" />
                             <label for="task${list}">Name new task</label>
                           </div>
+                          <input id="task-date${list}" name="Task Due Date" type="date" style="margin: 0 5 0 0;"/>
                           <input type="submit" class="btn btn-success" value="Add new task" />
                         </form>
                       </div>
@@ -111,6 +113,7 @@ function addTaskList(event) {
                       <div class="form-floating" id="filter-wrapper${tasklistId}">
                         <input type="text" name="filter${tasklistId}" id="filter${tasklistId}" class="form-control" placeholder="filter" />
                         <label for="filter${tasklistId}">Search for task</label>
+                        <input id="due${tasklistId}" type="#" class="btn btn-success" value="Due Soon" />
                       </div>
 
                       <ol class="list-group list-group-numbered mt-3 mb-3" id="tasklist${tasklistId}"></ol>
@@ -125,6 +128,7 @@ function addTaskList(event) {
                           <input type="text" name="task" id="task${tasklistId}" class="form-control me-3" placeholder="New Task" />
                           <label for="task${tasklistId}">Name new task</label>
                         </div>
+                        <input id="task-date${tasklistId}" name="Task Due Date" type="date" style="margin: 0 5 0 0;"/>
                         <input type="submit" class="btn btn-success" value="Add new task" />
                       </form>
                     </div>
@@ -209,12 +213,14 @@ class Tasklist {
     event.preventDefault();
 
     let taskName = document.querySelector(`#task${selected}`).value.trim();
+    let taskDue = event.target.previousSibling.previousSibling.value;
 
     if (taskName.length) {
       let task = {
         name: taskName,
         status: 'pending',
         date: new Date().getTime(),
+        dueDate: new Date(taskDue),
         order: '',
       };
 
