@@ -71,6 +71,7 @@ function addTaskList(event) {
       const clearTasks = accordian.querySelector(`#clear-tasks${list}`);
       const clearCompTasks = accordian.querySelector(`#clear-comp-tasks${list}`);
       const filter = accordian.querySelector(`#filter${list}`);
+      const due = accordian.querySelector(`#due${list}`);
 
       taskListNode.querySelector('button').addEventListener('click', (event) => {
         selected = event.target.dataset.indexnum;
@@ -83,6 +84,7 @@ function addTaskList(event) {
       clearTasks.addEventListener('click', Tasklist.deleteAll);
       clearCompTasks.addEventListener('click', Tasklist.deleteAllCompleted);
       filter.addEventListener('keyup', Tasklist.filter);
+      due.addEventListener('click', Tasklist.filter);
     }
   } else {
     event.preventDefault();
@@ -147,6 +149,7 @@ function addTaskList(event) {
     const clearTasks = accordian.querySelector(`#clear-tasks${tasklistId}`);
     const clearCompTasks = accordian.querySelector(`#clear-comp-tasks${tasklistId}`);
     const filter = accordian.querySelector(`#filter${tasklistId}`);
+    const due = accordian.querySelector(`#due${tasklistId}`);
 
     taskListNode.querySelector('button').addEventListener('click', (event) => {
       selected = event.target.dataset.indexnum;
@@ -159,6 +162,7 @@ function addTaskList(event) {
     clearTasks.addEventListener('click', Tasklist.deleteAll);
     clearCompTasks.addEventListener('click', Tasklist.deleteAllCompleted);
     filter.addEventListener('keyup', Tasklist.filter);
+    due.addEventListener('click', Tasklist.filter);
 
     tasklists[tasklistId] = {
       name: taskListName,
@@ -213,7 +217,8 @@ class Tasklist {
     event.preventDefault();
 
     let taskName = document.querySelector(`#task${selected}`).value.trim();
-    let taskDue = event.target.previousSibling.previousSibling.value;
+    let taskDue = 0;
+    if (event.target.previousSibling.previousSibling.value) taskDue = event.target.previousSibling.previousSibling.value;
 
     if (taskName.length) {
       let task = {
@@ -288,14 +293,32 @@ class Tasklist {
     }
 
     if (event) {
-      const text = event.target.value.toLowerCase();
-      document.querySelectorAll(`#tasklist${selected}`).forEach(function (task) {
-        if (task.querySelector('.form-check-label').textContent.toLowerCase().trim().indexOf(text) !== -1) {
-          task.setAttribute('style', 'display: flex !important');
-        } else {
-          task.setAttribute('style', 'display: none !important ');
-        }
-      });
+      if (event.target.value != 'Due Soon') {
+        const text = event.target.value.toLowerCase();
+        document.querySelectorAll(`#tasklist${selected}`).forEach(function (task) {
+          if (task.querySelector('.form-check-label').textContent.toLowerCase().trim().indexOf(text) !== -1) {
+            task.setAttribute('style', 'display: flex !important');
+          } else {
+            task.setAttribute('style', 'display: none !important ');
+          }
+        });
+      } else {
+        let i = 0;
+        document.querySelectorAll(`#tasklist${selected}`).forEach(function (task) {
+          let date2 = tasklists[selected].tasks[i].dueDate;
+          let date1 = new Date();
+          let date1_tomorrow = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate() + 1);
+          if (
+            date1_tomorrow.getFullYear() == date2.getFullYear() &&
+            date1_tomorrow.getMonth() == date2.getMonth() &&
+            date1_tomorrow.getDate() == date2.getDate()
+          ) {
+            task.setAttribute('style', 'display: flex !important');
+          } else {
+            task.setAttribute('style', 'display: none !important ');
+          }
+        });
+      }
     }
   }
 }
