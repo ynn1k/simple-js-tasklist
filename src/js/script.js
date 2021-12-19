@@ -16,7 +16,7 @@ function addTaskList(event) {
       const html = `
                 <div>
                   <div class="card">
-                    <div class="card-header" id="heading${list}">
+                    <div class="card-header d-flex flex-row" id="heading${list}">
                       <h5 class="mb-0">
                         <button
                           class="btn btn-link"
@@ -30,6 +30,8 @@ function addTaskList(event) {
                           ${tasklists[list].name}
                         </button>
                       </h5>
+                      <h5>Ttesing</h5>
+                      <a href="#" class="btn btn-sm btn-outline-danger" id="clear-list${list}">Delete Tasklist</a>
                     </div>
 
                     <div id="collapse${list}" class="collapse" aria-labelledby="heading${list}" data-bs-parent="#accordionTaskList">
@@ -90,7 +92,7 @@ function addTaskList(event) {
     const html = `
               <div>
                 <div class="card">
-                  <div class="card-header" id="heading${tasklistId}">
+                  <div class="card-header d-flex flex-row" id="heading${tasklistId}">
                     <h5 class="mb-0">
                       <button
                         class="btn btn-link"
@@ -104,6 +106,7 @@ function addTaskList(event) {
                         ${taskListName}
                       </button>
                     </h5>
+                    <a href="#" class="btn btn-sm btn-outline-danger" id="clear-list${tasklistId}">Delete Tasklist</a>
                   </div>
 
                   <div id="collapse${tasklistId}" class="collapse" aria-labelledby="heading${tasklistId}" data-bs-parent="#accordionTaskList">
@@ -161,6 +164,7 @@ function addTaskList(event) {
       tasks: [],
     };
     ++tasklistId;
+    taskListForm.reset();
     localStorage.setItem('tasklists', JSON.stringify(tasklists));
   }
 }
