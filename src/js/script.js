@@ -85,10 +85,7 @@ class Tasklist {
             let date = parseInt(event.target.offsetParent.dataset.id)
             const task = tasks.find(task => task.date === date);
             task.status = task.status === "completed" ? "pending" : "completed";
-            localStorage.setItem('tasks', JSON.stringify([
-                ...tasks.filter(task => task.date !== date),
-                task
-            ]));
+            localStorage.setItem('tasks', JSON.stringify(tasks));
         }
     }
 
