@@ -5,3 +5,4 @@ dist/
 .parcel-cache/
 .envrc
 .prettierrc
+.eslintrc.json
