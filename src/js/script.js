@@ -9,14 +9,14 @@ let selected = 0;
 let tasklistId = 1;
 
 function addTaskList(event) {
-  //If it is page load just render the collapse stuff
+  //If it is page initial load/reload just render the collapse stuff
   if (event.target == document) {
     for (let list in tasklists) {
       tasklists[list].rendered = false;
       const html = `
                 <div>
                   <div class="card">
-                    <div class="card-header d-flex flex-row" id="heading${list}">
+                    <div class="card-header d-flex flex-row justify-content-between" id="heading${list}">
                       <h5 class="mb-0">
                         <button
                           class="btn btn-link"
@@ -30,7 +30,6 @@ function addTaskList(event) {
                           ${tasklists[list].name}
                         </button>
                       </h5>
-                      <h5>Ttesing</h5>
                       <a href="#" class="btn btn-sm btn-outline-danger" id="clear-list${list}">Delete Tasklist</a>
                     </div>
 
@@ -68,6 +67,7 @@ function addTaskList(event) {
 
       const taskform = accordian.querySelector(`#task-form${list}`);
       const tasklist = accordian.querySelector(`#tasklist${list}`);
+      const clearTasksList = accordian.querySelector(`#clear-list${list}`);
       const clearTasks = accordian.querySelector(`#clear-tasks${list}`);
       const clearCompTasks = accordian.querySelector(`#clear-comp-tasks${list}`);
       const filter = accordian.querySelector(`#filter${list}`);
@@ -80,6 +80,7 @@ function addTaskList(event) {
       taskform.addEventListener('click', Tasklist.add);
       tasklist.addEventListener('click', Tasklist.remove);
       tasklist.addEventListener('mouseup', Tasklist.complete);
+      clearTasksList.addEventListener('click', deleteTaskList);
       clearTasks.addEventListener('click', Tasklist.deleteAll);
       clearCompTasks.addEventListener('click', Tasklist.deleteAllCompleted);
       filter.addEventListener('keyup', Tasklist.filter);
@@ -92,7 +93,7 @@ function addTaskList(event) {
     const html = `
               <div>
                 <div class="card">
-                  <div class="card-header d-flex flex-row" id="heading${tasklistId}">
+                  <div class="card-header d-flex flex-row justify-content-between" id="heading${tasklistId}">
                     <h5 class="mb-0">
                       <button
                         class="btn btn-link"
@@ -143,6 +144,7 @@ function addTaskList(event) {
 
     const taskform = accordian.querySelector(`#task-form${tasklistId}`);
     const tasklist = accordian.querySelector(`#tasklist${tasklistId}`);
+    const clearTasksList = accordian.querySelector(`#clear-list${tasklistId}`);
     const clearTasks = accordian.querySelector(`#clear-tasks${tasklistId}`);
     const clearCompTasks = accordian.querySelector(`#clear-comp-tasks${tasklistId}`);
     const filter = accordian.querySelector(`#filter${tasklistId}`);
@@ -155,6 +157,7 @@ function addTaskList(event) {
     taskform.addEventListener('click', Tasklist.add);
     tasklist.addEventListener('click', Tasklist.remove);
     tasklist.addEventListener('mouseup', Tasklist.complete);
+    clearTasksList.addEventListener('click', deleteTaskList);
     clearTasks.addEventListener('click', Tasklist.deleteAll);
     clearCompTasks.addEventListener('click', Tasklist.deleteAllCompleted);
     filter.addEventListener('keyup', Tasklist.filter);
@@ -167,6 +170,13 @@ function addTaskList(event) {
     taskListForm.reset();
     localStorage.setItem('tasklists', JSON.stringify(tasklists));
   }
+}
+
+function deleteTaskList(e) {
+  const id = e.target.id.slice(-1);
+  delete tasklists[id];
+  localStorage.setItem('tasklists', JSON.stringify(tasklists));
+  window.location.reload();
 }
 
 class Tasklist {
