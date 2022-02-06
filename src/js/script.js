@@ -1,38 +1,45 @@
-//UI vars
-const form = document.querySelector("#task-form");
-const tasklist = document.querySelector(".tasklist");
-const clearTasks = document.querySelector(".clear-tasks");
-const clearCompTasks = document.querySelector(".clear-comp-tasks");
-const filter = document.querySelector("#filter");
-const taskInput = document.querySelector("#task");
-
-//app vars
-let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-let deferredReorderEvent = null;
-
 class Tasklist {
-    static init() {
-        tasks.forEach(task => Tasklist.renderTask(task));
+    constructor() {
+        //UI vars
+        this.form = document.querySelector("#task-form");
+        this.tasklist = document.querySelector("#tasklist");
+        this.clearTasks = document.querySelector("#clear-tasks");
+        this.clearCompTasks = document.querySelector("#clear-completed-tasks");
+        this.filterEl = document.querySelector("#filter");
+        this.taskInput = document.querySelector("#task");
 
-        Tasklist.filter();
+        //app vars
+        this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        this.deferredReorderEvent = null;
+
+        this.init();
+    }
+
+    init() {
+        this.tasks.forEach(task => this.renderTask(task));
+        this.filterTasks();
+
+        //event listeners
+        this.form.addEventListener("submit", (event) => this.add(event));
+        this.tasklist.addEventListener("click", (event) => this.remove(event));
+        this.tasklist.addEventListener("mouseup", (event) => this.complete(event));
+        this.tasklist.addEventListener("drag", (event) => this.reorder(event));
+        this.tasklist.addEventListener("dragend", (event) => this.reorder(event));
+        this.clearTasks.addEventListener("click", (event) => this.deleteAll(event));
+        this.clearCompTasks.addEventListener("click", (event) => this.deleteAllCompleted(event));
+        this.filterEl.addEventListener("keyup", (event) => this.filterTasks(event));
     }
 
     /**
      * reders a single task to the bottom
      * @param {object} task
      */
-    static renderTask(task) {
-        let checked
-
-        if(task.status === 'completed') {
-            checked = 'checked'
-        } else {
-            checked = 'pending'
-        }
+    renderTask(task) {
+        let checked = task.status === 'completed' ? 'checked' : 'pending';
 
         const html = `
             <li class="d-flex list-group-item list-group-item-action task" data-id="${task.date}" draggable="true">
-                <div class="form-check ms-1">
+                <div class="form-check ms-2">
                     <input type="checkbox" ${checked} class="form-check-input" id="task_${task.date}">
                     <label class="form-check-label" for="task_${task.date}">${task.name}</label>
                 </div>
@@ -46,17 +53,17 @@ class Tasklist {
 
         let doc = new DOMParser().parseFromString(html.trim(), 'text/html')
         let taskNode = doc.body.querySelector('li');
-        tasklist.appendChild(taskNode);
+        this.tasklist.appendChild(taskNode);
     }
 
-    static reorder(event) {
+    reorder(event) {
         event.preventDefault();
 
         if (event.target.classList.contains('drag-handle')) {
             event.target.offsetParent.classList.add('dragging');
 
-            const holdingElement = tasklist.querySelector('.dragging');
-            const draggablePositions = [...tasklist.querySelectorAll('li:not(.dragging)')];
+            const holdingElement = this.tasklist.querySelector('.dragging');
+            const draggablePositions = [...this.tasklist.querySelectorAll('li:not(.dragging)')];
 
             const holdingOverElement = draggablePositions.reduce((closestElement, element) => {
                 //check whether the center of the underlying element has been crossed
@@ -68,29 +75,30 @@ class Tasklist {
                 }
 
                 return closestElement
-            },{ offset : Number.NEGATIVE_INFINITY }).element;
+            }, {offset: Number.NEGATIVE_INFINITY}).element;
 
             if (event.type === 'dragend') {
                 event.target.offsetParent.classList.remove('dragging');
 
                 if (holdingOverElement === undefined) {
-                    tasklist.appendChild(holdingElement);
+                    this.tasklist.appendChild(holdingElement);
                 } else {
-                    tasklist.insertBefore(holdingElement, holdingOverElement);
+                    this.tasklist.insertBefore(holdingElement, holdingOverElement);
                 }
 
-                const newOrdering = [...tasklist.querySelectorAll('label')].map(task=>task.innerHTML)
-                tasks.sort((a,b)=>newOrdering.findIndex((task)=>task === a.name) - newOrdering.findIndex((task)=>task === b.name))
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                const newOrdering = [...this.tasklist.querySelectorAll('label')].map(task => task.innerHTML)
+                this.tasks.sort((a, b) => newOrdering.findIndex((task) => task === a.name) - newOrdering.findIndex((task) => task === b.name))
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
             }
         }
     }
 
-    static add(event) {
+    add(event) {
         event.preventDefault();
-        let taskName = taskInput.value.trim();
+        console.log(this.taskInput);
+        let taskName = this.taskInput.value.trim();
 
-        if(taskName.length) {
+        if (taskName.length) {
             let task = {
                 name: taskName,
                 status: 'pending',
@@ -98,90 +106,84 @@ class Tasklist {
                 order: '',
             }
 
-            tasks.push(task);
-            Tasklist.renderTask(task);
+            this.tasks.push(task);
+            this.renderTask(task);
 
-            form.reset();
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            this.form.reset();
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
 
-            Tasklist.filter();
+            this.filterTasks();
         }
     }
 
-    static remove(event) {
-        if(event.target.parentElement.classList.contains('delete-task')){
+    remove(event) {
+        if (event.target.parentElement.classList.contains('delete-task')) {
             event.preventDefault();
-            if(confirm('Delete task: ' + event.target.parentElement.parentElement.textContent.trim())) {
+            if (confirm('Delete task: ' + event.target.parentElement.parentElement.textContent.trim())) {
                 let date = parseInt(event.target.offsetParent.dataset.id)
-                tasks = tasks.filter(task => task.date !== date)
+                console.log(this.tasks)
+                this.tasks = this.tasks.filter(task => task.date !== date)
                 event.target.offsetParent.remove()
 
-                localStorage.setItem('tasks', JSON.stringify(tasks));
-                Tasklist.filter();
+                localStorage.setItem('tasks', JSON.stringify(this.tasks));
+                this.filterTasks();
             }
         }
     }
 
-    static complete(event) {
-        if(event.target.parentElement.classList.contains('form-check')){
+    complete(event) {
+        if (event.target.parentElement.classList.contains('form-check')) {
             let date = parseInt(event.target.offsetParent.dataset.id)
-            const task = tasks.find(task => task.date === date);
+            const task = this.tasks.find(task => task.date === date);
             task.status = task.status === "completed" ? "pending" : "completed";
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
         }
     }
 
-    static deleteAll() {
-        if(confirm('This will delete ALL tasks')) {
-            tasklist.innerHTML = ''
+    deleteAll() {
+        if (confirm('This will delete ALL tasks')) {
+            this.tasklist.innerHTML = ''
             localStorage.removeItem('tasks');
             window.location.reload()
         }
     }
 
-    static deleteAllCompleted(){
-        if(confirm('This will delete ALL completed tasks')) {
-            tasks.forEach(task => {
-              if(task.status === 'completed')
-              document.querySelector(`[data-id="${task.date}"]`).remove();
+    deleteAllCompleted() {
+        if (confirm('This will delete ALL COMPLETED tasks')) {
+            this.tasks.forEach(task => {
+                if (task.status === 'completed')
+                    document.querySelector(`[data-id="${task.date}"]`).remove();
             });
-            tasks = tasks.filter(task => task.status !== 'completed');
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            Tasklist.filter();
+            this.tasks = this.tasks.filter(task => task.status !== 'completed');
+            localStorage.setItem('tasks', JSON.stringify(this.tasks));
+            this.filterTasks();
         }
     }
 
-    static filter(event) {
-        if(tasks.length > 2) {
-            document.querySelector('.clear-tasks').style.display = 'inline-block';
-            document.querySelector('.clear-comp-tasks').style.display = 'inline-block';
-            document.querySelector('.filter-wrapper').style.display = 'block';
+    filterTasks(event) {
+        if (this.tasks.length > 2) {
+            document.querySelector('#clear-tasks').style.display = 'inline-block';
+            document.querySelector('#clear-completed-tasks').style.display = 'inline-block';
+            document.querySelector('#filter-wrapper').style.display = 'block';
         } else {
-            document.querySelector('.clear-tasks').style.display = 'none';
-            document.querySelector('.clear-comp-tasks').style.display = 'none';
-            document.querySelector('.filter-wrapper').style.display = 'none';
+            document.querySelector('#clear-tasks').style.display = 'none';
+            document.querySelector('#clear-completed-tasks').style.display = 'none';
+            document.querySelector('#filter-wrapper').style.display = 'none';
         }
 
-        if(event){
+        if (event) {
             const text = event.target.value.toLowerCase();
-            document.querySelectorAll(".task").forEach(function(task){
-                if(task.querySelector(".form-check-label").textContent.toLowerCase().trim().indexOf(text) !== -1) {
-                    task.setAttribute( 'style', "display: flex !important");
+            document.querySelectorAll(".task").forEach(function (task) {
+                if (task.querySelector(".form-check-label").textContent.toLowerCase().trim().indexOf(text) !== -1) {
+                    task.setAttribute('style', "display: flex !important");
                 } else {
-                    task.setAttribute( 'style', "display: none !important ");
+                    task.setAttribute('style', "display: none !important ");
                 }
             });
         }
     }
 }
 
-//event listeners
-document.addEventListener('DOMContentLoaded', Tasklist.init);
-form.addEventListener("submit", Tasklist.add);
-tasklist.addEventListener("click", Tasklist.remove);
-tasklist.addEventListener("mouseup", Tasklist.complete);
-tasklist.addEventListener("drag", Tasklist.reorder);
-tasklist.addEventListener("dragend", Tasklist.reorder);
-clearTasks.addEventListener("click", Tasklist.deleteAll);
-clearCompTasks.addEventListener("click", Tasklist.deleteAllCompleted);
-filter.addEventListener("keyup", Tasklist.filter);
+document.addEventListener('DOMContentLoaded', function () {
+    new Tasklist();
+});

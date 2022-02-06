@@ -16,15 +16,15 @@
                 <h1 class="text-center">Simple tasklist</h1>
                 <hr>
 
-                <div class="form-floating filter-wrapper">
+                <div id="filter-wrapper" class="form-floating">
                     <input type="text" name="filter" id="filter" class="form-control" placeholder="filter">
                     <label for="filter">Search for task</label>
                 </div>
 
-                <ol class="list-group list-group-numbered mt-3 mb-3 tasklist"></ol>
+                <ol id="tasklist" class="list-group list-group-numbered mt-3 mb-3"></ol>
 
-                <a href="#" class="btn btn-sm btn-outline-danger clear-tasks">Clear tasks</a>
-                <a href="#" class="btn btn-sm btn-outline-danger clear-comp-tasks">Clear completed tasks</a>
+                <a href="#" id="clear-tasks" class="btn btn-sm btn-outline-danger">Clear all tasks</a>
+                <a href="#" id="clear-completed-tasks" class="btn btn-sm btn-outline-danger">Clear completed tasks</a>
                 <hr>
 
                 <form id="task-form" class="d-flex">
