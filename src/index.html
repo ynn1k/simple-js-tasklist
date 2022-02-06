@@ -13,7 +13,7 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-12 col-md-8 col-lg-6 shadow-sm my-5 py-5 bg-light border rounded-3">
-                <h1 class="text-center">Simple tasklist</h1>
+                <h1 class="text-center">Objectives</h1>
                 <hr>
 
                 <div id="filter-wrapper" class="form-floating">
@@ -27,10 +27,14 @@
                 <a href="#" id="clear-completed-tasks" class="btn btn-sm btn-outline-danger">Clear completed tasks</a>
                 <hr>
 
-                <form id="task-form" class="d-flex">
+                <form id="new-task-form" class="d-flex">
                     <div class="form-floating d-flex flex-fill">
-                        <input type="text" name="task" id="task" class="form-control me-3" placeholder="New Task">
+                        <input type="text" name="task" id="task-name" class="form-control me-3" placeholder="New Task">
                         <label for="task">Name new task</label>
+                    </div>
+                    <div class="form-floating d-flex">
+                        <input type="date" name="task" id="task-due-date" class="form-control me-3" placeholder="New Task">
+                        <label for="task">Due date</label>
                     </div>
                     <input type="submit" class="btn btn-success" value="Add new task">
                 </form>
