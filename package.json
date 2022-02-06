@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "description": "simple tasklisting",
   "source": "src/index.html",
-  "main": "dist/index.js",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
     "start": "parcel --open",
-    "build": "parcel build"
+    "build": "parcel build --public-url ."
   },
   "repository": {
     "type": "git",
@@ -20,7 +19,10 @@
   },
   "homepage": "https://github.com/ynn1k/simple-js-tasklist#readme",
   "devDependencies": {
-    "@parcel/transformer-sass": "^2.0.1",
-    "parcel": "^2.0.1"
+    "@parcel/transformer-sass": "^2.2.1",
+    "parcel": "^2.2.1"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.3.2"
   }
 }
